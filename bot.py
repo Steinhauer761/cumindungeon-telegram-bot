@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import re
@@ -147,6 +148,14 @@ def main():
     app.add_handler(CallbackQueryHandler(button))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     logger.info("CumInDungeon bot starting")
+
+    # Python 3.14 no longer creates a default event loop automatically.
+    # python-telegram-bot's polling startup expects one to exist.
+    try:
+        asyncio.get_event_loop()
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
+
     app.run_polling()
 
 
